@@ -2,8 +2,13 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 class EnemyShip extends Ship {
+
+    Vector2 directionVector;
+    float timeSinceLastDirectionChange = 0;
+    float directionChangeFrequency = 0.75f;
 
     public EnemyShip(float xCenter, float yCenter,
                       float width, float height,
@@ -13,6 +18,32 @@ class EnemyShip extends Ship {
                       TextureRegion shipTextureRegion, TextureRegion shieldTextureRegion,
                       TextureRegion laserTextureRegion) {
         super(xCenter, yCenter, width, height, movementSpeed, shield, laserWidth, laserHeight, laserMovementSpeed, timeBetweenShots, shipTextureRegion, shieldTextureRegion, laserTextureRegion);
+
+        directionVector = new Vector2(0, -1);
+
+    }
+
+    //   GETTERS   //
+    public Vector2 getDirectionVector() {return directionVector; }
+
+    //  METHODS   //
+    private void randomizeDirectionVector() {
+        double bearing = MyGdxGame.random.nextDouble()*6.283185;
+        directionVector.x = (float) Math.sin(bearing);
+        directionVector.y = (float) Math.cos(bearing);
+
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+        timeSinceLastDirectionChange += deltaTime;
+        if(timeSinceLastDirectionChange > directionChangeFrequency) {
+            randomizeDirectionVector();
+            timeSinceLastDirectionChange -= directionChangeFrequency;
+
+        }
+
     }
 
     @Override
